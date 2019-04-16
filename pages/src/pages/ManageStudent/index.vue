@@ -24,7 +24,7 @@
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="manageScore(scope.row)" type="primary">成绩管理</el-button>
+            <el-button @click="manageScore(scope.row)" type="primary" size="small">成绩管理</el-button>
             <el-button @click="changeCard(scope.row)" type="warning" size="small">换卡</el-button>
             <el-button @click="delStudent(scope.row)" type="danger" size="small">删除</el-button>
           </template>
@@ -49,6 +49,9 @@
             placeholder="请输入学生姓名"
             v-model="addStudentModelForm.StudentName"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="专业班级" :label-width="formLabelWidth">
+          <el-input autocomplete="off" v-model="addStudentModelForm.StudentId"></el-input>
         </el-form-item>
       </el-form>
       <div>
@@ -181,7 +184,7 @@ export default {
       console.log("换卡操作");
     },
     manageScore(row) {
-      this.$refs['studentScoreManageModel'].showScoreManageModel()
+      this.$refs["studentScoreManageModel"].showScoreManageModel();
       this.chooseSid = row.id;
     }
   }
