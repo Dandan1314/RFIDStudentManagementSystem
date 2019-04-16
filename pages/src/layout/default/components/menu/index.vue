@@ -82,39 +82,8 @@ export default {
           label: "学生管理",
           path: "/manageStudent",
           showMenu: [1, 2]
-        },
-        {
-          label: "成绩管理",
-          path: "/manageScore",
-          showMenu: [1,2]
         }
       ]
-
-      // [{
-      //   label: '主页',
-      //   icon: 'fa-home',
-      //   path: Home.path,
-      //   showMenu: [1,2,3]
-      // }, {
-      //   label: '表格管理',
-      //   path: '/table',
-      //   icon: 'fa-table',
-      //   child: [{
-      //     label: '基本表格',
-      //     path: '/table/base'
-      //   }, {
-      //     label: '排序表格',
-      //     path: '/table/sort'
-      //   }]
-      // }, {
-      //   label: '图表管理',
-      //   path: '/charts',
-      //   icon: 'fa-bar-chart-o',
-      //   child: [{
-      //     label: '柱状图表',
-      //     path: '/charts/bar'
-      //   }]
-      // }]
     };
   },
   computed: {
