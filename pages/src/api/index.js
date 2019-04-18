@@ -10,4 +10,6 @@ context.keys().map(item => {
   _result[k] = context(item)
 })
 
+console.log('_result => ', _result)
+
 export default _result
