@@ -39,8 +39,8 @@ const studentSchema = new Schema({
     sex: Number,
     email: String,
     phone: String,
-    collage_ID: Number,
-    majorClass_ID: Number,
+    collage_ID: String,
+    majorClass_ID: String,
     status: { type: Boolean, default: true }
 })
 const Student = mongoose.model('Student', studentSchema)

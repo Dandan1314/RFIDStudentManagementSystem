@@ -49,6 +49,7 @@ const delTeacher = async (r, h) => {
 const getTeacherList = async (r, h) => {
     try {
         const getTeacherListRes = await db.Teacher.find({
+            role: { $ne: 1 },
             status: true
         })
         return {
@@ -57,7 +58,7 @@ const getTeacherList = async (r, h) => {
             TeacherList: getTeacherListRes.map(item => {
                 return {
                     "id": item._id,
-                    "name": item.name
+                    "name": item.name,
                 }
             })
         }
@@ -86,24 +87,9 @@ const editTeacher = async (r, h) => {
     }
 }
 
-const getTeacherInfo = async (r, h) => {
-    try {
-        const getTeacherInfoRes = await db.Teacher.findOne(r.params)
-        return getTeacherInfoRes 
-                ? { code: 200005,  msg: '获取成功！' , getTeacherInfoRes: getTeacherInfoRes}
-                : { code: 500005,  msg: '没有该教师！'}
-    } catch (error) {
-        return {
-            code: 500005,
-            msg: '获取失败!'
-        }
-    }
-}
-
 module.exports = {
     addTeacher,
     delTeacher,
     getTeacherList,
-    editTeacher,
-    getTeacherInfo
+    editTeacher
 }
