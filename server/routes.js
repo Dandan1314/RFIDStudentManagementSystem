@@ -1,5 +1,5 @@
-const teacher_C = require('../controllers/teacher')
-const collageMajorClass_C = require('../controllers/collageMajorClass')
+const teacher_C = require('./controllers/teacher')
+const collageMajorClass_C = require('./controllers/collageMajorClass')
 
 module.exports = [
     // 教师表操作
