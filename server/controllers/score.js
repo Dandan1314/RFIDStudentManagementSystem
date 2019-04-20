@@ -37,7 +37,7 @@ const getScoreInfo = async (r, h) => {
         const scoreInfoResList = await db.Score.find({
             student_ID: r.params.student_ID,
             status: true
-        })
+        }).sort({'_id':-1})
 
         return {
             code: 200402,
