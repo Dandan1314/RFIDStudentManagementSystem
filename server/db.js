@@ -20,7 +20,7 @@ const Schema = mongoose.Schema;
 const teacherSchema = new Schema({
     card_ID: String,
     name: String,
-    role: { type: Number, defalut: 2 },
+    role: { type: Number, default: 2 },
     status: { type: Boolean, default: true }
 })
 const Teacher = mongoose.model('Teacher', teacherSchema)

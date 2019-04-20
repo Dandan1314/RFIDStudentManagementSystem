@@ -1,6 +1,7 @@
 const teacher_C = require('../controllers/teacher')
 
 module.exports = [
+    // 教师表操作
     {
         method: 'PUT',
         path: '/addTeacher',
@@ -8,11 +9,22 @@ module.exports = [
     },
     {
         method: 'DELETE',
-        path: '/delAdmin',
-        handler: (request, h) => {
-            return {
-                message: '/'
-            };
-        }
+        path: '/delTeacher/{id}',
+        handler: teacher_C.delTeacher
+    },
+    {
+        method: 'GET',
+        path: '/getTeacherList',
+        handler: teacher_C.getTeacherList
+    },
+    {
+        method: 'PATCH',
+        path: '/editTeacherInfo',
+        handler: teacher_C.editTeacher
+    },
+    {
+        method: 'GET',
+        path: '/getTeacherInfo/{id}',
+        handler: teacher_C.getTeacherInfo
     }
 ]
