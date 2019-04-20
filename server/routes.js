@@ -1,6 +1,7 @@
 const teacher_C = require('./controllers/teacher')
 const collageMajorClass_C = require('./controllers/collageMajorClass')
 const student_C = require('./controllers/student')
+const subject_C = require('./controllers/subject')
 
 module.exports = [
     // 教师表操作
@@ -60,5 +61,21 @@ module.exports = [
         method: 'GET',
         path: '/getStudentList',
         handler: student_C.getStudentList
+    },
+    // 学科管理
+    {
+        method: 'PUT',
+        path: '/addSubject',
+        handler: subject_C.addSubject
+    },
+    {
+        method: 'DELETE',
+        path: '/delSubject/{_id}',
+        handler: subject_C.delSubject
+    },
+    {
+        method: 'GET',
+        path: '/getSubjectList',
+        handler: subject_C.getSubjectList
     }
 ]
