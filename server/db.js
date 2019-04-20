@@ -52,9 +52,12 @@ const subjectSchema = new Schema({
 const Subject = mongoose.model('Subject', subjectSchema)
 
 const scoreSchema = new Schema({
-    student_ID: Number,
-    subject_ID: Number,
-    score: Number,
+    student_ID: String,
+    subject_ID: String,
+    dailyScroll: Number,
+    examScroll: Number,
+    resScroll: Number,
+    result: Number,
     exam_Category: Number,
     status: { type: Boolean, default: true }
 })

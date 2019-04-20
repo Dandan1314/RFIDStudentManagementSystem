@@ -2,6 +2,7 @@ const teacher_C = require('./controllers/teacher')
 const collageMajorClass_C = require('./controllers/collageMajorClass')
 const student_C = require('./controllers/student')
 const subject_C = require('./controllers/subject')
+const score_C = require('./controllers/score')
 
 module.exports = [
     // 教师表操作
@@ -77,5 +78,21 @@ module.exports = [
         method: 'GET',
         path: '/getSubjectList',
         handler: subject_C.getSubjectList
+    },
+    // 成绩管理
+    {
+        method: 'PUT',
+        path: '/addScore',
+        handler: score_C.addScore
+    },
+    {
+        method: 'DELETE',
+        path: '/delScore/{_id}',
+        handler: score_C.delScore
+    },
+    {
+        method: "GET",
+        path: '/getScoreInfo/{student_ID}',
+        handler: score_C.getScoreInfo
     }
 ]

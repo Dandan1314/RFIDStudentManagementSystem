@@ -4,12 +4,12 @@ const addSubject = async (r, h) => {
     try {
         await db.Subject.create(r.payload)
         return {
-            code: 200401,
+            code: 200301,
             msg: '添加成功！'
         }
     } catch (error) {
         return {
-            code: 500401,
+            code: 500301,
             msg: '添加失败！'
         }
     }
@@ -21,12 +21,12 @@ const delSubject = async (r, h) => {
             status: false
         })
         return {
-            code: 200402,
+            code: 200302,
             msg: "删除成功！"
         }
     } catch (error) {
         return {
-            code: 500402,
+            code: 500302,
             msg: '删除失败！'
         }
     }
@@ -35,13 +35,13 @@ const delSubject = async (r, h) => {
 const getSubjectList = async (r, h) => {
     try {
         return {
-            code: 200403,
+            code: 200303,
             msg: '获取成功！',
             subjectList: await db.Subject.find({ status: true })
         }
     } catch (error) {
         return {
-            code: 500403,
+            code: 500303,
             msg: '获取失败！'
         }
     }

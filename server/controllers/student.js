@@ -9,7 +9,7 @@ const addStudent = async (r, h) => {
         })
         if (searchTeacherRes) {
             return {
-                code: 403301,
+                code: 403201,
                 msg: '添加失败，卡片重复！'
             }
         }
@@ -17,13 +17,13 @@ const addStudent = async (r, h) => {
         const saveRes = await db.Student.create(r.payload)
         if (saveRes) {
             return {
-                code: 200301,
+                code: 200201,
                 msg: '添加成功！'
             }
         }
     } catch (e) {
         return {
-            code: 500301,
+            code: 500201,
             msg: '添加失败，服务器错误！'
         }
     }
@@ -35,12 +35,12 @@ const delStudent = async (r, h) => {
             status: false
         })
         return {
-            code: 200002,
+            code: 200202,
             msg: "删除成功！"
         }
     } catch (e) {
         return {
-            code: 500002,
+            code: 500202,
             msg: "删除成功！"
         }
     }
@@ -52,12 +52,12 @@ const editStudent = async (r, h) => {
             _id: r.payload._id
         }, r.payload)
         return {
-            code: 200303,
+            code: 200203,
             msg: "编辑成功！"
         }
     } catch (error) {
         return {
-            code: 500303,
+            code: 500203,
             msg: '编辑失败！'
         }
     }
@@ -68,27 +68,25 @@ const getStudentList = async (r, h) => {
         const getStudentInfoListRes = await db.Student.find({
             status: true
         })
-        const getStudentList = await Promise.all(getStudentInfoListRes.map(item => {
-            return db.CollageMajorClass
-                        .findOne({ _id: item.collage_ID })
-                        .then(collageRes => {
-                            item._doc.collageName = collageRes['name']
-                            return db.CollageMajorClass.findOne({ _id : item.majorClass_ID })
-                        })
-                        .then(majorClassRes => {
-                            item._doc.majorClassName = majorClassRes['name']
-                            return item
-                        })
-        }))
         return {
-            code: 200304,
+            code: 200204,
             msg: '获取成功！',
-            getStudentList
+            getStudentList: await Promise.all(getStudentInfoListRes.map(item => {
+                return db.CollageMajorClass
+                            .findOne({ _id: item.collage_ID })
+                            .then(collageRes => {
+                                item._doc.collageName = collageRes['name']
+                                return db.CollageMajorClass.findOne({ _id : item.majorClass_ID })
+                            })
+                            .then(majorClassRes => {
+                                item._doc.majorClassName = majorClassRes['name']
+                                return item
+                            })
+            }))
         }
     } catch (error) {
-        console.log('err => ', error)
         return {
-            code: 500304,
+            code: 500204,
             msg: '获取失败！'
         }
     }
