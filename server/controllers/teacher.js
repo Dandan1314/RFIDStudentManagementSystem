@@ -72,7 +72,7 @@ const getTeacherList = async (r, h) => {
 const editTeacher = async (r, h) => {
     try {
         await db.Teacher.findOneAndUpdate({
-            _id: r.payload.id
+            _id: r.payload._id
         }, r.payload)
         return {
             code: 200004,
@@ -88,7 +88,7 @@ const editTeacher = async (r, h) => {
 
 const getTeacherInfo = async (r, h) => {
     try {
-        const getTeacherInfoRes = await db.Teacher.findOne({ _id: r.params.id })
+        const getTeacherInfoRes = await db.Teacher.findOne(r.params)
         return getTeacherInfoRes 
                 ? { code: 200005,  msg: '获取成功！' , getTeacherInfoRes: getTeacherInfoRes}
                 : { code: 500005,  msg: '没有该教师！'}

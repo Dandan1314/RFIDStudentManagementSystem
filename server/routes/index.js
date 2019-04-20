@@ -1,4 +1,5 @@
 const teacher_C = require('../controllers/teacher')
+const collageMajorClass_C = require('../controllers/collageMajorClass')
 
 module.exports = [
     // 教师表操作
@@ -9,7 +10,7 @@ module.exports = [
     },
     {
         method: 'DELETE',
-        path: '/delTeacher/{id}',
+        path: '/delTeacher/{_id}',
         handler: teacher_C.delTeacher
     },
     {
@@ -24,7 +25,23 @@ module.exports = [
     },
     {
         method: 'GET',
-        path: '/getTeacherInfo/{id}',
+        path: '/getTeacherInfo/{_id}',
         handler: teacher_C.getTeacherInfo
+    },
+    // 学院专业班级
+    {
+        method: 'PUT',
+        path: '/addCMC',
+        handler: collageMajorClass_C.addCMC
+    },
+    {
+        method: 'DELETE',
+        path: '/delCMC/{_id}',
+        handler: collageMajorClass_C.delCMC
+    },
+    {
+        method: 'GET',
+        path: '/getCMCList/{parent_id}',
+        handler: collageMajorClass_C.getCMCList
     }
 ]
