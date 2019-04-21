@@ -55,17 +55,13 @@ const Http = async options => {
      */
     console.log('http: response', response)
     const data = response.data
-    if (+data.code === 0) {
-      // 请求成功
+    if (parseInt(data.code / 10000) === 200) {
       console.log('http: response success', data)
       success && success(data)
       return Promise.resolve(data)
     } else {
       // 失败(这里可以做未登录或者其他权限处理)
-      if (data.code === -2) {
-        // 用户登录失效
-      }
-      const errorObj = {type: 'business', ...data}
+      const errorObj = {...data}
       console.log('http: response error', errorObj)
       // 失败
       error && error(errorObj)

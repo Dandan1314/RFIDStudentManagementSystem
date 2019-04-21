@@ -6,9 +6,7 @@ import VueRouter from 'vue-router'
 import routes from './routes'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import Store from 'src/store'
-import {GET_IS_LOGIN} from 'src/store/getters/type'
-import {UserLogin} from './auto-routes'
+import {UserLogin, FullLayout} from './auto-routes'
 
 Vue.use(VueRouter)
 
@@ -27,19 +25,18 @@ const router = new VueRouter({
 // 全局路由配置
 // 路由开始之前的操作
 router.beforeEach((to, from, next) => {
-  if (from.path !== '/') {
-    NProgress.done().start()
-  }
-
-  const isLogin = Store.getters[GET_IS_LOGIN]
-  const auth = to.meta.auth
-
-  if (auth === false || auth === 'false') {
-    // 不需要验证的
+  // 在最开始这里可以添加错误页跳转逻辑
+  if ((to.path === UserLogin.path) && !localStorage['loginInfo']) {
     next()
-  } else {
-    // 已经登录的继续执行，没登录就跑到登录页面中去
-    isLogin ? next() : router.replace(UserLogin.path)
+  }
+  if ((to.path !== UserLogin.path) && !localStorage['loginInfo']) {
+    router.replace(UserLogin.path)
+  }
+  if (localStorage['loginInfo'] && (to.path === UserLogin.path)) {
+    router.replace(FullLayout.path)
+  }
+  if (localStorage['loginInfo'] && (to.path !== UserLogin.path)) {
+    next()
   }
 })
 

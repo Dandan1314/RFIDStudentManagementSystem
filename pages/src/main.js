@@ -14,8 +14,6 @@ import ElementUI from './element-ui'
 import components from './components'
 // 导入路由
 import router from './router'
-// 导入状态管理器
-import store from 'src/store'
 // 导入请求框架
 // import api from './api'
 // 导入自定义插件
@@ -33,6 +31,5 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
-  store,
   render: h => h(App)
 }).$mount('mainbody')

@@ -1,3 +1,4 @@
+const common_C = require('./controllers/common')
 const teacher_C = require('./controllers/teacher')
 const collageMajorClass_C = require('./controllers/collageMajorClass')
 const student_C = require('./controllers/student')
@@ -5,6 +6,12 @@ const subject_C = require('./controllers/subject')
 const score_C = require('./controllers/score')
 
 module.exports = [
+    // 登录
+    {
+        method: 'POST',
+        path: '/login',
+        handler: common_C.login
+    },
     // 教师表操作
     {
         method: 'PUT',
@@ -54,7 +61,7 @@ module.exports = [
         handler: student_C.delStudent
     },
     {
-        method: 'PATCH', 
+        method: 'PATCH',
         path: '/editStudent',
         handler: student_C.editStudent
     },

@@ -12,8 +12,8 @@
       </div>
       <el-dropdown class="head-right">
         <div class="head-user flex pointer">
-          <img :src="userInfo.avatar" class="head-avatar">
-          <span class="user-text" v-text="userInfo.name"/>
+          <!-- <img :src="userInfo.avatar" class="head-avatar"> -->
+          <span class="user-text" v-text="loginInfo.name"/>
         </div>
         <el-dropdown-menu slot="dropdown" class="dropdown-menu">
           <el-dropdown-item class="dropdown-list" @click.native="onLogout">
@@ -26,35 +26,30 @@
   </div>
 </template>
 <script type="text/javascript">
-import {mapGetters, mapActions} from 'vuex'
-import {GET_USER_INFO} from 'src/store/getters/type'
-import {SET_USER_INFO} from 'src/store/actions/type'
 import {UserLogin} from 'src/router/auto-routes'
 
 export default {
+  data() {
+    return {
+      loginInfo: {}
+    }
+  },
   methods: {
-    ...mapActions({
-      setUserInfo: SET_USER_INFO
-    }),
     // 登出
     async onLogout () {
-      const {$confirm, $api, $message, $router, setUserInfo} = this
       try {
-        await $confirm('此操作将退出登录, 是否继续?', '提示', {type: 'warning'})
-        const {msg} = await $api.user.logout()
-        $message.success(msg)
-        setUserInfo(null)
-        $router.replace(UserLogin.path)
+        await this.$confirm('此操作将退出登录, 是否继续?', '提示', {type: 'warning'})
+        localStorage.removeItem('loginInfo')
+        this.$message.success('已退出登录！')
+        this.$router.replace(UserLogin.path)
       } catch ({msg}) {
-        msg && $message.warn(msg)
+        msg && this.$message.warn(msg)
       }
     }
   },
-  computed: {
-    ...mapGetters({
-      userInfo: GET_USER_INFO
-    })
-  }
+  mounted () {
+    this.loginInfo = Object.assign({}, JSON.parse(localStorage['loginInfo']));
+  },
 }
 </script>
 <style lang="scss" type="text/scss" rel="stylesheet/scss">

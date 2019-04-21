@@ -41,7 +41,7 @@
               </el-menu-item>
             </el-submenu>
             <!--顶级菜单-->
-            <el-menu-item v-else :key="index" :index="item.path" :route="{path: item.path}">
+            <el-menu-item v-else-if="item.showMenu.indexOf(loginInfo.role) >= 0" :key="index" :index="item.path" :route="{path: item.path}">
               <template slot="title">
                 <i class="menu__icon fa" :class="item.icon" v-if="item.icon"/>
                 <span class="menu__label" v-text="item.label"/>
@@ -61,6 +61,7 @@ export default {
   data() {
     return {
       homePage,
+      loginInfo: {},
       menu: [
         {
           label: "主页",
@@ -85,6 +86,9 @@ export default {
         }
       ]
     };
+  },
+  mounted () {
+    this.loginInfo = Object.assign({}, { role: parseInt(JSON.parse(localStorage.loginInfo).role) })
   },
   computed: {
     getDefaultActive() {

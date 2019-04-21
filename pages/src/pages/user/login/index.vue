@@ -1,5 +1,12 @@
 <template>
   <div class="page-module login-container backgroundCover flex width_100 height_100">
+    <OBJECT
+      id="LotusCardDriver"
+      Visible="false"
+      width="0"
+      height="0"
+      classid="CLSID:BD1874A5-3810-4639-8B70-3DDD607BAADB"
+    ></OBJECT>
     <div class="login-panel">
       <div class="head-text align_center">
         <img src="./images/card.jpg">
@@ -23,24 +30,37 @@
   </div>
 </template>
 <script type="text/javascript" layout="full" meta="{auth:false}">
-import { mapActions } from "vuex";
-import { SET_USER_INFO } from "src/store/actions/type";
 import { homePage } from "src/common/setting";
+import { cardId } from "src/common/cardControl";
 export default {
   name: "Login",
   data() {
     return {};
   },
   methods: {
-    ...mapActions({
-      setUserInfo: SET_USER_INFO
-    }),
     getCardId() {
-      return 11111;
+      return cardId();
     },
-    login(cardId) {
-      console.log(cardId);
-      
+    async login(cardId) {
+      try {
+        const vm = this;
+        const data = await vm.$api.user.login({ card_ID: cardId });
+        let auth = data['data']['role'] ? '教师' : '学生';
+        if(data['data']['role'] == 1) {
+          auth = '管理员'
+        }
+        localStorage.setItem('loginInfo', `{ "name": "${data.data.name}", "role": "${data.data.role}", "_id": "${data.data._id}" }`)
+        vm.$message.success(`${data.msg}, 欢迎${data.data.name}登录系统，身份${auth} 。`)
+        setTimeout(() => {
+          vm.$router.replace(homePage)
+        }, 1500)
+      } catch (error) {
+        this.$message.error("登录出错，请检查卡片，如有疑问请联系管理员！")
+        var Timer = setInterval(() => {
+          const cardId = this.getCardId();
+          cardId ? (clearInterval(Timer), this.login(cardId)) : "";
+        }, 1200);
+      }
     }
     // onSubmit () {
     //   const {$refs, $api, form, $message, $notify, setUserInfo, $router} = this

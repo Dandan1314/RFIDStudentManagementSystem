@@ -24,7 +24,7 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: './src/main.js'
+    app: ['babel-polyfill', './src/main.js']
   },
   output: {
     jsonpFunction: '__web__',
@@ -41,7 +41,6 @@ module.exports = {
       'src': resolve('src'),
       'assets': resolve('src/assets'),
       'common': resolve('src/common'),
-      'store': resolve('src/store'),
       'pages': resolve('src/pages'),
       'plugins': resolve('src/plugins'),
       'components': resolve('src/components')
