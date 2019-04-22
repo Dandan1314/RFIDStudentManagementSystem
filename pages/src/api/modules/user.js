@@ -9,10 +9,3 @@ export const login = (data) => {
     data
   })
 }
-// 登出
-export const logout = () => {
-  return fetch({
-    url: userUrl.logout,
-    method: 'post'
-  })
-}
