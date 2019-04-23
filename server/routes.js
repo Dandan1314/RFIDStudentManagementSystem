@@ -46,7 +46,7 @@ module.exports = [
     },
     {
         method: 'GET',
-        path: '/getCMCList/{parent_id}',
+        path: '/getCMCList',
         handler: collageMajorClass_C.getCMCList
     },
     // 学生信息管理

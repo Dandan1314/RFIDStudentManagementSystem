@@ -55,7 +55,8 @@ const Http = async options => {
      */
     console.log('http: response', response)
     const data = response.data
-    if (parseInt(data.code / 10000) === 200) {
+    // 这里有/1000 有/10000 为了兼容处理
+    if ((parseInt(data.code / 1000) === 200) || (parseInt(data.code / 10000) === 200)) {
       console.log('http: response success', data)
       success && success(data)
       return Promise.resolve(data)

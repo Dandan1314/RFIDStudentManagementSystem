@@ -129,8 +129,24 @@ export default {
     };
   },
   methods: {
-    addCollageOk() {
-      console.log("添加学院 => ");
+    async addCollageOk() {
+      const vm = this;
+      if (!vm.addCollageModelForm.collageName) {
+        vm.$message.error("信息填写错误");
+        return false;
+      }
+      try {
+        const data = await vm.$api.collageMajorClass.addCMC({
+          name: vm.addCollageModelForm.collageName
+        });
+        // 添加之后就重新获取一下列表
+        vm.getCMCList()
+        vm.$message.success(data.msg);
+        vm.addCollageModelForm.collageName = "";
+        vm.addCollageModel = false;
+      } catch (error) {
+        vm.$message.success("添加失败，请联系管理员！");
+      }
     },
     addMajorClassOk() {
       console.log("添加班级学院 => ");
@@ -144,8 +160,8 @@ export default {
           style="color: blue;margin-left: 10px;"
           on-click={() => {
             vm.addMajorClassModel = true;
-            vm.addMajorClassModelForm.pid = data.id
-            vm.addMajorClassModelForm.parent_name = data.label
+            vm.addMajorClassModelForm.pid = data.id;
+            vm.addMajorClassModelForm.parent_name = data.label;
           }}
         >
           添加
@@ -172,7 +188,30 @@ export default {
     remove(node, data) {
       console.log("node => ", node);
       console.log("data => ", data);
+    },
+    async getCMCList() {
+      const getCMCListRes = await this.$api.collageMajorClass.getCMCList();
+      this.listData = await getCMCListRes.getCListRes.map(item => {
+        item.label = item.name;
+        item.id = item._id;
+        if (item.children.length) {
+          item.children.map(childrenItem => {
+            childrenItem.pid = item.id;
+            childrenItem.label = childrenItem.name;
+            childrenItem.id = childrenItem._id;
+            delete childrenItem.name;
+            delete childrenItem._id;
+            return childrenItem
+          });
+        }
+        delete item.name;
+        delete item._id;
+        return item
+      });
     }
+  },
+  mounted() {
+    this.getCMCList()
   }
 };
 </script>
