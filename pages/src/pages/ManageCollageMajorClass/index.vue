@@ -69,7 +69,7 @@ export default {
       addMajorClassModel: false,
       addMajorClassModelForm: {
         MajorClassName: "",
-        pid: 0,
+        parent_id: 0,
         parent_name: ""
       },
       listData: [],
@@ -91,7 +91,7 @@ export default {
           name: vm.addCollageModelForm.collageName
         });
         // 添加之后就重新获取一下列表
-        vm.getCMCList()
+        vm.getCMCList();
         vm.$message.success(data.msg);
         vm.addCollageModelForm.collageName = "";
         vm.addCollageModel = false;
@@ -99,8 +99,23 @@ export default {
         vm.$message.error("添加失败，请联系管理员！");
       }
     },
-    addMajorClassOk() {
-      console.log("添加班级学院 => ");
+    async addMajorClassOk() {
+      if (!this.addMajorClassModelForm.MajorClassName) {
+        this.$message.error("信息填写错误");
+        return false;
+      }
+      try {
+        const addInfo = Object.assign({}, this.addMajorClassModelForm);
+        const resData = await this.$api.collageMajorClass.addCMC({
+          name: addInfo.MajorClassName,
+          parent_id: addInfo.parent_id
+        });
+        this.getCMCList();
+        this.$message.success(resData.msg);
+        this.addMajorClassModel = false;
+      } catch (error) {
+        this.$message.error("添加失败，请联系管理员！");
+      }
     },
     renderContent(h, { node, data, store }) {
       const vm = this;
@@ -111,7 +126,7 @@ export default {
           style="color: blue;margin-left: 10px;"
           on-click={() => {
             vm.addMajorClassModel = true;
-            vm.addMajorClassModelForm.pid = data.id;
+            vm.addMajorClassModelForm.parent_id = data.id;
             vm.addMajorClassModelForm.parent_name = data.label;
           }}
         >
@@ -137,11 +152,11 @@ export default {
       );
     },
     async remove(node, data) {
-      const pid = data.pid ? data.pid : data.id
-      const cid = data.pid ? data.id : ''
-      await this.$api.collageMajorClass.delCMC(pid, cid) 
-      this.$message.success('删除成功，正在重新加载列表');  
-      this.getCMCList()
+      const pid = data.pid ? data.pid : data.id;
+      const cid = data.pid ? data.id : "";
+      await this.$api.collageMajorClass.delCMC(pid, cid);
+      this.$message.success("删除成功，正在重新加载列表");
+      this.getCMCList();
     },
     async getCMCList() {
       const getCMCListRes = await this.$api.collageMajorClass.getCMCList();
@@ -155,17 +170,17 @@ export default {
             childrenItem.id = childrenItem._id;
             delete childrenItem.name;
             delete childrenItem._id;
-            return childrenItem
+            return childrenItem;
           });
         }
         delete item.name;
         delete item._id;
-        return item
+        return item;
       });
     }
   },
   mounted() {
-    this.getCMCList()
+    this.getCMCList();
   }
 };
 </script>
