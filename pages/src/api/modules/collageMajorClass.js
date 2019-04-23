@@ -17,3 +17,11 @@ export const getCMCList = () => {
     method: 'get'
   })
 }
+
+// 删除学院专业班级
+export const delCMC = (pid, cid) => {
+  return fetch({
+    url: CMC.delCMC + pid + '_' + cid,
+    method: 'delete'
+  })
+}

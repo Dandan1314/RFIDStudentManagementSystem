@@ -33,8 +33,8 @@
         <el-button type="primary" @click="addCollageOk">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 添加班级专业 -->
-    <el-dialog title="添加班级专业" :visible.sync="addMajorClassModel" width="30%" center>
+    <!-- 添加专业班级 -->
+    <el-dialog title="添加专业班级" :visible.sync="addMajorClassModel" width="30%" center>
       <el-form :model="addMajorClassModelForm" @submit.native.prevent>
         <el-form-item label="班级专业" :label-width="formLabelWidth">
           <el-input
@@ -72,56 +72,7 @@ export default {
         pid: 0,
         parent_name: ""
       },
-      listData: [
-        {
-          label: "计算机",
-          id: 1,
-          children: [
-            {
-              label: "2015计算机科学与技术1班",
-              id: 2,
-              pid: 1
-            },
-            {
-              label: "2015计算机科学与技术2班",
-              id: 3,
-              pid: 1
-            }
-          ]
-        },
-        {
-          label: "一级 2",
-          id: 4,
-          children: [
-            {
-              label: "二级 2-1",
-              id: 5,
-              pid: 4
-            },
-            {
-              label: "二级 2-2",
-              id: 6,
-              pid: 4
-            }
-          ]
-        },
-        {
-          label: "一级 3",
-          id: 7,
-          children: [
-            {
-              label: "二级 3-1",
-              id: 8,
-              pid: 7
-            },
-            {
-              label: "二级 3-2",
-              id: 9,
-              pid: 7
-            }
-          ]
-        }
-      ],
+      listData: [],
       defaultProps: {
         children: "children",
         label: "label"
@@ -145,7 +96,7 @@ export default {
         vm.addCollageModelForm.collageName = "";
         vm.addCollageModel = false;
       } catch (error) {
-        vm.$message.success("添加失败，请联系管理员！");
+        vm.$message.error("添加失败，请联系管理员！");
       }
     },
     addMajorClassOk() {
@@ -185,9 +136,12 @@ export default {
         </span>
       );
     },
-    remove(node, data) {
-      console.log("node => ", node);
-      console.log("data => ", data);
+    async remove(node, data) {
+      const pid = data.pid ? data.pid : data.id
+      const cid = data.pid ? data.id : ''
+      await this.$api.collageMajorClass.delCMC(pid, cid) 
+      this.$message.success('删除成功，正在重新加载列表');  
+      this.getCMCList()
     },
     async getCMCList() {
       const getCMCListRes = await this.$api.collageMajorClass.getCMCList();

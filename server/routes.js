@@ -41,7 +41,7 @@ module.exports = [
     },
     {
         method: 'DELETE',
-        path: '/delCMC/{_id}',
+        path: '/delCMC/{ids}',
         handler: collageMajorClass_C.delCMC
     },
     {

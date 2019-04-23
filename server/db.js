@@ -28,7 +28,8 @@ const Teacher = mongoose.model('Teacher', teacherSchema)
 const collageMajorClassSchema = new Schema({
     name: String,
     children: [{
-        name: String
+        name: String,
+        status: { type: Boolean, default: true }
     }],
     status: { type: Boolean, default: true }
 })
