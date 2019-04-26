@@ -34,10 +34,11 @@
         layout="prev, pager, next"
         :total="itemTotal"
         style="margin-top: 16px;"
+        v-show="!search"
       ></el-pagination>
     </div>
     <!-- 添加教师 -->
-    <el-dialog title="添加教师" :visible.sync="addTeacherModel" width="30%" center>
+    <el-dialog title="添加教师" :visible.sync="addTeacherModel" width="350px" center>
       <el-form :model="addTeacherModelForm">
         <el-form-item label="教师编号" :label-width="formLabelWidth">
           <el-input
@@ -56,12 +57,14 @@
       </el-form>
       <div>
         卡片状态：
-        <span style="color: green;">获取成功！</span>
+        <span
+          :style="cardControl ? 'color: green;' : 'color: red;'"
+        >{{ cardControl ? '获取成功！' : '未获取！' }} {{ cardControl }}</span>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addTeacherModel = false">取 消</el-button>
+        <el-button @click="() => {addTeacherModel = false; cardControl = '';}">取 消</el-button>
         <el-button type="warning" @click="addTeacherReadCard">读 卡</el-button>
-        <el-button type="primary" @click="addTeacherOk">确 定</el-button>
+        <el-button type="primary" @click="addTeacherOk" :disabled="!cardControl">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 删除教师 -->
@@ -79,7 +82,7 @@
       </span>
     </el-dialog>
     <!-- 换卡 -->
-    <el-dialog title="提示" :visible.sync="changeCardModel" width="300px" center>
+    <el-dialog title="提示" :visible.sync="changeCardModel" width="350px" center>
       <div style="text-align:center;">
         <p>正在进行换卡操作</p>
         <p>
@@ -87,16 +90,23 @@
           <span style="color:red">{{changeCardInfo.name}}</span>
         </p>
       </div>
+      <div style="text-align:center;">
+        卡片状态：
+        <span
+          :style="cardControl ? 'color: green;' : 'color: red;'"
+        >{{ cardControl ? '获取成功！' : '未获取！' }} {{ cardControl }}</span>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="changeCardModel = false">取 消</el-button>
+        <el-button @click="() => {changeCardModel = false; cardControl = '';}">取 消</el-button>
         <el-button type="warning" @click="changeCardRead">读 卡</el-button>
-        <el-button type="primary" @click="changeCardOk">确 定</el-button>
+        <el-button type="primary" @click="changeCardOk" :disabled="!cardControl">确 定</el-button>
       </span>
     </el-dialog>
   </ui-container>
 </template>
 
 <script>
+import { cardId } from "src/common/cardControl";
 export default {
   name: "manageTeacher",
   data() {
@@ -109,33 +119,7 @@ export default {
       },
       search: null,
       itemTotal: 100,
-      tableData: [
-        {
-          id: 1,
-          num: "100001",
-          name: "张三"
-        },
-        {
-          id: 2,
-          num: "100002",
-          name: "李四"
-        },
-        {
-          id: 3,
-          num: "100003",
-          name: "王五"
-        },
-        {
-          id: 4,
-          num: "100004",
-          name: "赵六"
-        },
-        {
-          id: 5,
-          num: "100005",
-          name: "孙七"
-        }
-      ],
+      tableData: [],
       delTeacherModel: false,
       delTeacherInfo: {
         id: null,
@@ -147,23 +131,56 @@ export default {
         id: null,
         name: "",
         num: null
-      }
+      },
+      cardControl: ""
     };
   },
   methods: {
-    addTeacherReadCard() {
-      console.log("添加教师时的读卡操作！");
+    async getTeacherList() {
+      try {
+        const TeacherListRes = await this.$api.ManageTeacher.getTeacherList();
+        this.tableData = TeacherListRes.TeacherList;
+      } catch (error) {
+        console.log(error);
+      }
     },
-    addTeacherOk() {
-      console.log("添加教师");
+    addTeacherReadCard() {
+      this.cardControl = cardId();
+    },
+    async addTeacherOk() {
+      const vm = this;
+      try {
+        const addTeacherRes = await this.$api.ManageTeacher.addTeacher({
+          card_ID: vm.cardControl,
+          teacher_Num: vm.addTeacherModelForm.TeacherId,
+          name: vm.addTeacherModelForm.TeacherName
+        });
+        vm.getTeacherList();
+        vm.$message.success(addTeacherRes.msg);
+        vm.addTeacherModelForm = {
+          TeacherId: null,
+          TeacherName: ""
+        };
+        vm.cardControl = "";
+        vm.addTeacherModel = false;
+      } catch (error) {
+        vm.$message.error("添加失败！");
+      }
     },
     delTeacher(info) {
       this.delTeacherModel = true;
       this.delTeacherInfo = Object.assign(this.delTeacherInfo, info);
-      console.log("删除教师 => ", info);
     },
-    delTeacherOk() {
-      console.log("确认删除教师！");
+    async delTeacherOk() {
+      console.log("确认删除教师！", this.delTeacherInfo);
+      try {
+        const delTeacherRes = await this.$api.ManageTeacher.delTeacher(this.delTeacherInfo.serverID)
+        this.$message.success(delTeacherRes.msg);
+        this.delTeacherModel = false;
+        this.getTeacherList();
+      } catch (error) {
+        console.log(error)
+      }
     },
     changeCard(info) {
       this.changeCardModel = true;
@@ -171,11 +188,14 @@ export default {
       console.log("换卡教师 => ", info);
     },
     changeCardRead() {
-      console.log("换卡时进行读卡操作！")
-    }, 
+      this.cardControl = cardId();
+    },
     changeCardOk() {
       console.log("换卡操作");
     }
+  },
+  mounted() {
+    this.getTeacherList();
   }
 };
 </script>

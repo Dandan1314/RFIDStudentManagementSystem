@@ -62,28 +62,6 @@ export default {
         }, 1200);
       }
     }
-    // onSubmit () {
-    //   const {$refs, $api, form, $message, $notify, setUserInfo, $router} = this
-
-    //   $refs.form.validate(async (valid) => {
-    //     if (!valid) return false
-    //     this.submitLoad = true
-
-    //     try {
-    //       const {data, msg} = await $api.user.login(form)
-    //       setUserInfo(data)
-    //       $message.success(msg)
-    //       $router.replace(homePage)
-    //     } catch ({type}) {
-    //       type === 'business' && $notify.info({
-    //         title: '温馨提示',
-    //         message: '账号和密码都为：admin'
-    //       })
-    //     } finally {
-    //       this.submitLoad = false
-    //     }
-    //   })
-    // }
   },
   mounted() {
     //通过一个定时器循环获取数据，直到获取到数据之后，停止

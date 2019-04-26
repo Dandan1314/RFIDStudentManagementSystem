@@ -35,6 +35,9 @@ const changeString = CardNo => {
 }
 
 export const cardId = () => {
+  if (navigator.userAgent.indexOf('Chrome/') >= 0 && navigator.userAgent.indexOf('WebKit') >= 0) {
+    return 'T' + Date.now()
+  }
   const OpenDeviceRes = LotusCardDriver.OpenDevice('', 0, 0, 0)
   if (OpenDeviceRes <= 0) {
     console.log('设备打开失败！')

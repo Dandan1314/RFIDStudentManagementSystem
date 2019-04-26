@@ -57,10 +57,12 @@ const getTeacherList = async (r, h) => {
         return {
             code: 200003,
             msg: '获取成功!',
-            TeacherList: getTeacherListRes.map(item => {
+            TeacherList: getTeacherListRes.map((item, index) => {
                 return {
-                    "id": item._id,
+                    "id": index + 1,
+                    "serverID": item._id,
                     "name": item.name,
+                    "num": item.teacher_Num
                 }
             })
         }
