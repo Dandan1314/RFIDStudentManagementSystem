@@ -58,8 +58,6 @@ const delCMC = async (r, h) => {
 const getCMCList = async (r, h) => {
     try {
         const getCListRes = await db.CollageMajorClass.find({ status : true })
-        // const getCListRes = await db.CollageMajorClass.find({ status : true }, { children: { $elemMatch: { status: true } } } )
-        // const getCListRes = await db.CollageMajorClass.find({ status : true , "children.status": true }, {"children.$": 1})
 
         return {
             code: 200103,
