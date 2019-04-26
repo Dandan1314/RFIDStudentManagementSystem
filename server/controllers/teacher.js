@@ -81,7 +81,7 @@ const editTeacher = async (r, h) => {
         }, r.payload)
         return {
             code: 200004,
-            msg: "编辑成功！"
+            msg: "操作成功！"
         }
     } catch (error) {
         return {

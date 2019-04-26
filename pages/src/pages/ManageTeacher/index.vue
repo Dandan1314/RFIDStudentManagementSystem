@@ -174,24 +174,36 @@ export default {
     async delTeacherOk() {
       console.log("确认删除教师！", this.delTeacherInfo);
       try {
-        const delTeacherRes = await this.$api.ManageTeacher.delTeacher(this.delTeacherInfo.serverID)
+        const delTeacherRes = await this.$api.ManageTeacher.delTeacher(
+          this.delTeacherInfo.serverID
+        );
         this.$message.success(delTeacherRes.msg);
         this.delTeacherModel = false;
         this.getTeacherList();
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     },
     changeCard(info) {
       this.changeCardModel = true;
       this.changeCardInfo = Object.assign(this.changeCardInfo, info);
-      console.log("换卡教师 => ", info);
     },
     changeCardRead() {
       this.cardControl = cardId();
     },
-    changeCardOk() {
-      console.log("换卡操作");
+    async changeCardOk() {
+      const vm = this;
+      try {
+        const changeCardRes = await vm.$api.ManageTeacher.editTeacher({
+          _id: vm.changeCardInfo.serverID,
+          card_ID: vm.cardControl
+        });
+        vm.$message.success(changeCardRes.msg);
+        this.cardControl = "";
+        this.changeCardModel = false;
+      } catch (error) {
+        vm.$message.error("换卡失败！");
+      }
     }
   },
   mounted() {

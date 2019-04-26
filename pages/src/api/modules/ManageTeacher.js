@@ -25,3 +25,12 @@ export const delTeacher = id => {
     method: 'delete'
   })
 }
+
+// 编辑教师
+export const editTeacher = data => {
+  return fetch({
+    url: Teacher.editTeacherInfo,
+    method: 'patch',
+    data
+  })
+}
