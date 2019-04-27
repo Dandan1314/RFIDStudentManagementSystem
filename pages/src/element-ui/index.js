@@ -30,7 +30,8 @@ import {
   Aside,
   Breadcrumb,
   BreadcrumbItem,
-  Tree
+  Tree,
+  Cascader
 } from 'element-ui'
 // 按道理来说可以导入进来，但是提示没有这个，所以直接单独导入进来吧
 import Scrollbar from 'element-ui/lib/scrollbar'
@@ -58,7 +59,8 @@ const components = [
   Scrollbar,
   Breadcrumb,
   BreadcrumbItem,
-  Tree
+  Tree,
+  Cascader
 ]
 
 const install = Vue => {

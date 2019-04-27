@@ -40,9 +40,9 @@ const studentSchema = new Schema({
     card_ID: String,
     student_Num: String,
     name: String,
-    sex: Number,
-    email: String,
-    phone: String,
+    // sex: Number,
+    // email: String,
+    // phone: String,
     collage_ID: String,
     majorClass_ID: String,
     status: { type: Boolean, default: true }
