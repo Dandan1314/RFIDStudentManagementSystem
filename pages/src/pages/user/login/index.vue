@@ -12,20 +12,6 @@
         <img src="./images/card.jpg">
       </div>
       <div style="text-align:center;">请刷卡进入成绩管理系统</div>
-      <!-- <div class="head-text align_center">
-        <img src="./images/login_logo.png">
-      </div>-->
-      <!-- <el-form class="login-form" size="medium" :model="form" :rules="rules" ref="form">
-        <el-form-item prop="username">
-          <el-input placeholder="请输入账户名：" autofocus v-model="form.username"/>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input type="password" placeholder="请输入账户密码：" v-model="form.password"/>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" class="width_100" icon="el-icon-check" @click="onSubmit" :loading="submitLoad"/>
-        </el-form-item>
-      </el-form>-->
     </div>
   </div>
 </template>

@@ -1,5 +1,12 @@
 <template>
   <ui-container>
+    <OBJECT
+      id="LotusCardDriver"
+      Visible="false"
+      width="0"
+      height="0"
+      classid="CLSID:BD1874A5-3810-4639-8B70-3DDD607BAADB"
+    ></OBJECT>
     <div slot="header">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -52,7 +59,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="专业班级" :label-width="formLabelWidth">
-          <el-cascader :options="CMList"  style="width: 380px;" v-model="CMListSelect"></el-cascader>
+          <el-cascader :options="CMList" style="width: 380px;" v-model="CMListSelect"></el-cascader>
         </el-form-item>
       </el-form>
       <div>
@@ -161,7 +168,7 @@ export default {
       chooseSid: 0,
       cardControl: "",
       CMList: [],
-      CMListSelect: ['', '']
+      CMListSelect: ["", ""]
     };
   },
   methods: {
@@ -169,11 +176,11 @@ export default {
       this.cardControl = cardId();
     },
     addStudentOk() {
-      console.log(this.cardControl)
-      console.log(this.addStudentModelForm)
-      console.log(this.CMListSelect)
+      console.log(this.cardControl);
+      console.log(this.addStudentModelForm);
+      console.log(this.CMListSelect);
       console.log("添加学生");
-      this.$api.student.addStudent()
+      this.$api.student.addStudent();
     },
     delStudent(info) {
       this.delStudentModel = true;
@@ -207,16 +214,16 @@ export default {
             value: item._id,
             label: item.name,
             children: item.children
-                    ? item.children.map(cItem => {
-                      return {
-                        value: cItem._id,
-                        label: cItem.name
-                      }
-                    })
-                    : []
-          }
-        })
-        console.log(this.CMList)
+              ? item.children.map(cItem => {
+                  return {
+                    value: cItem._id,
+                    label: cItem.name
+                  };
+                })
+              : []
+          };
+        });
+        console.log(this.CMList);
       } catch (error) {
         this.$message.error("班级专业列表获取失败");
       }

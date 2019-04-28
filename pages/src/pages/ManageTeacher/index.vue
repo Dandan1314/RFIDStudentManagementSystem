@@ -1,5 +1,12 @@
 <template>
   <ui-container>
+    <OBJECT
+      id="LotusCardDriver"
+      Visible="false"
+      width="0"
+      height="0"
+      classid="CLSID:BD1874A5-3810-4639-8B70-3DDD607BAADB"
+    ></OBJECT>
     <div slot="header">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
