@@ -9,3 +9,27 @@ export const addStudent = (data) => {
     data
   })
 }
+
+// 获取学生列表
+export const getStudentList = () => {
+  return fetch({
+    url: Student.getStudentList,
+  })
+}
+
+// 删除学生
+export const delStudent = id => {
+  return fetch({
+    url: Student.delStudent + `/${id}`,
+    method: 'delete'
+  })
+}
+
+// 编辑学生信息
+export const editStudent = data => {
+  return fetch({
+    url: Student.editStudent,
+    method: 'patch',
+    data
+  })
+}

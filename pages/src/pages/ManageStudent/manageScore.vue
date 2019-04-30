@@ -147,11 +147,23 @@ export default {
   methods: {
     showScoreManageModel() {
       this.studentScoreManageModel = true;
+      this.gridData = []
+      // 初始化学生数据
+      this.initStudentScore()
     },
     delScroll(scrollInfo) {
       console.log("scrollInfo => ", scrollInfo);
     },
-    addExamResInfo() {}
+    addExamResInfo() {},
+    async initStudentScore() {
+      try {
+        const getStudentScoreRes = await this.$api.score.getScoreInfo(this.chooseSid)
+        console.log(getStudentScoreRes)
+      } catch (error) {
+        
+      }
+      console.log('init')
+    }
   }
 };
 </script>

@@ -75,6 +75,11 @@ export default {
           showMenu: [1]
         },
         {
+          label: "学科管理",
+          path: "/ManageSubject",
+          showMenu: [1]
+        },
+        {
           label: "教师管理",
           path: "/manageTeacher",
           showMenu: [1]

@@ -7,6 +7,7 @@ const addStudent = async (r, h) => {
             card_ID: r.payload.card_ID,
             status: true
         })
+        console.log(searchTeacherRes)
         if (searchTeacherRes) {
             return {
                 code: 403201,
@@ -73,18 +74,21 @@ const getStudentList = async (r, h) => {
             msg: '获取成功！',
             getStudentList: await Promise.all(getStudentInfoListRes.map(item => {
                 return db.CollageMajorClass
-                            .findOne({ _id: item.collage_ID })
-                            .then(collageRes => {
-                                item._doc.collageName = collageRes['name']
-                                return db.CollageMajorClass.findOne({ _id : item.majorClass_ID })
-                            })
-                            .then(majorClassRes => {
-                                item._doc.majorClassName = majorClassRes['name']
-                                return item
-                            })
+                    .findOne({ _id: item.collage_ID })
+                    .then(collageRes => {
+                        if (collageRes) {
+                            item._doc.collageName = collageRes['name']
+                            item._doc.majorClassName = collageRes.children.find(cItem => {
+                                return cItem._id = item['majorClass_ID']
+                            })['name']
+                        } 
+                        delete item._doc.status
+                        return item
+                    })
             }))
         }
     } catch (error) {
+        console.log('err => ', error)
         return {
             code: 500204,
             msg: '获取失败！'

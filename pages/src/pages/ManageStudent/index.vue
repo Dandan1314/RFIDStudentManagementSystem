@@ -95,12 +95,15 @@
         <p>
           将要换卡的学生是:
           <span style="color:red">{{changeCardInfo.name}}</span>
-        </p>
+        </p>卡片状态：
+        <span
+          :style="cardControl ? 'color: green;' : 'color: red;'"
+        >{{ cardControl ? '获取成功！' : '未获取！' }} {{ cardControl }}</span>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="changeCardModel = false">取 消</el-button>
         <el-button type="warning" @click="changeCardRead">读 卡</el-button>
-        <el-button type="primary" @click="changeCardOk">确 定</el-button>
+        <el-button type="primary" @click="changeCardOk" :disabled="!cardControl">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 学生成绩管理 -->
@@ -126,33 +129,7 @@ export default {
       },
       search: null,
       itemTotal: 100,
-      tableData: [
-        {
-          id: 1,
-          num: "100001",
-          name: "张三"
-        },
-        {
-          id: 2,
-          num: "100002",
-          name: "李四"
-        },
-        {
-          id: 3,
-          num: "100003",
-          name: "王五"
-        },
-        {
-          id: 4,
-          num: "100004",
-          name: "赵六"
-        },
-        {
-          id: 5,
-          num: "100005",
-          name: "孙七"
-        }
-      ],
+      tableData: [],
       delStudentModel: false,
       delStudentInfo: {
         id: null,
@@ -175,30 +152,76 @@ export default {
     addStudentReadCard() {
       this.cardControl = cardId();
     },
-    addStudentOk() {
-      console.log(this.cardControl);
-      console.log(this.addStudentModelForm);
-      console.log(this.CMListSelect);
-      console.log("添加学生");
-      this.$api.student.addStudent();
+    async addStudentOk() {
+      const vm = this;
+      if (
+        !(
+          vm.cardControl &&
+          vm.addStudentModelForm.StudentId &&
+          vm.addStudentModelForm.StudentName &&
+          vm.CMListSelect[0] &&
+          vm.CMListSelect[1]
+        )
+      ) {
+        vm.$message.error("信息填写不完整！");
+        return false;
+      }
+      const addStudentObj = {
+        card_ID: vm.cardControl,
+        student_Num: vm.addStudentModelForm.StudentId,
+        name: vm.addStudentModelForm.StudentName,
+        collage_ID: vm.CMListSelect[0],
+        majorClass_ID: vm.CMListSelect[1]
+      };
+      try {
+        const addStudentRes = await this.$api.student.addStudent(addStudentObj);
+        vm.$message.success("添加成功！");
+        vm.cardControl = "";
+        vm.addStudentModelForm = {};
+        vm.CMListSelect = ["", ""];
+        vm.addStudentModel = false;
+        vm.getStudentList();
+      } catch (error) {
+        vm.$message.error(error.msg || "添加学生出错！");
+      }
     },
     delStudent(info) {
       this.delStudentModel = true;
       this.delStudentInfo = Object.assign(this.delStudentInfo, info);
-      console.log("删除学生 => ", info);
     },
-    delStudentOk() {
-      console.log("确认删除学生！");
+    async delStudentOk() {
+      try {
+        const deleteStudentRes = await this.$api.student.delStudent(
+          this.delStudentInfo._id
+        );
+        this.delStudentModel = false;
+        this.$message.success("学生删除成功！");
+        this.getStudentList();
+      } catch (error) {
+        this.$message.error("学生删除失败！");
+      }
     },
     changeCard(info) {
       this.changeCardModel = true;
       this.changeCardInfo = Object.assign(this.changeCardInfo, info);
-      console.log("换卡学生 => ", info);
     },
     changeCardRead() {
-      console.log("换卡时进行读卡操作！");
+      this.cardControl = cardId();
     },
-    changeCardOk() {
+    async changeCardOk() {
+      try {
+        const vm = this;
+        const editInfo = {
+          _id: vm.changeCardInfo._id,
+          card_ID: vm.cardControl
+        };
+        const changeCardRes = await this.$api.student.editStudent(editInfo);
+        this.$message.success("换卡成功！");
+        this.cardControl = "";
+        this.changeCardModel = false;
+      } catch (error) {
+        this.$message.error("换卡失败！");
+      }
       console.log("换卡操作");
     },
     manageScore(row) {
@@ -227,10 +250,25 @@ export default {
       } catch (error) {
         this.$message.error("班级专业列表获取失败");
       }
+    },
+    async getStudentList() {
+      try {
+        const getStudentList = await this.$api.student.getStudentList();
+        console.log("getStudentList => ", getStudentList);
+        this.tableData = getStudentList.getStudentList.map(item => {
+          item.id = item._id;
+          item.num = item.student_Num;
+          delete item.student_Num;
+          return item;
+        });
+      } catch (error) {
+        this.$message.error("学生列表获取失败");
+      }
     }
   },
   mounted() {
     this.getCM();
+    this.getStudentList();
   }
 };
 </script>
