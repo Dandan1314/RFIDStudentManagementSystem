@@ -2,10 +2,11 @@ const db = require('../db')
 
 const addSubject = async (r, h) => {
     try {
-        await db.Subject.create(r.payload)
+        const addSubjectRes = await db.Subject.create(r.payload)
         return {
             code: 200301,
-            msg: '添加成功！'
+            msg: '添加成功！',
+            addSubjectRes
         }
     } catch (error) {
         return {
@@ -17,7 +18,7 @@ const addSubject = async (r, h) => {
 
 const delSubject = async (r, h) => {
     try {
-        await db.Subject.findOneAndUpdate(r.params, {
+        await db.Subject.updateOne(r.params, {
             status: false
         })
         return {
