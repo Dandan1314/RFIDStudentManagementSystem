@@ -107,7 +107,7 @@
       </span>
     </el-dialog>
     <!-- 学生成绩管理 -->
-    <manageScore :chooseSid="chooseSid" ref="studentScoreManageModel"></manageScore>
+    <manageScore ref="studentScoreManageModel"></manageScore>
   </ui-container>
 </template>
 
@@ -142,7 +142,6 @@ export default {
         name: "",
         num: null
       },
-      chooseSid: 0,
       cardControl: "",
       CMList: [],
       CMListSelect: ["", ""]
@@ -222,16 +221,13 @@ export default {
       } catch (error) {
         this.$message.error("换卡失败！");
       }
-      console.log("换卡操作");
     },
     manageScore(row) {
-      this.$refs["studentScoreManageModel"].showScoreManageModel();
-      this.chooseSid = row.id;
+      this.$refs["studentScoreManageModel"].showScoreManageModel(row.id);
     },
     async getCM() {
       try {
         const getCMCListRes = await this.$api.collageMajorClass.getCMCList();
-        console.log(getCMCListRes.getCListRes);
         this.CMList = getCMCListRes.getCListRes.map(item => {
           return {
             value: item._id,
@@ -246,7 +242,6 @@ export default {
               : []
           };
         });
-        console.log(this.CMList);
       } catch (error) {
         this.$message.error("班级专业列表获取失败");
       }
@@ -254,7 +249,6 @@ export default {
     async getStudentList() {
       try {
         const getStudentList = await this.$api.student.getStudentList();
-        console.log("getStudentList => ", getStudentList);
         this.tableData = getStudentList.getStudentList.map(item => {
           item.id = item._id;
           item.num = item.student_Num;

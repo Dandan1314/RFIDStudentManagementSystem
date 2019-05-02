@@ -3,7 +3,19 @@
     <el-dialog title="考试成绩" :visible.sync="studentScoreManageModel" width="800px">
       <el-form :inline="true" :model="addExamRes">
         <el-form-item>
-          <el-input v-model="addExamRes.subject" placeholder="学科名" style="width: 188px;"></el-input>
+          <el-select
+            v-model="addExamRes.subject"
+            filterable
+            placeholder="学科名"
+            style="width: 188px;"
+          >
+            <el-option
+              v-for="(item, key) in subjectOpt"
+              :key="key"
+              :label="item.name"
+              :value="item._id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-input v-model="addExamRes.dailyScroll" placeholder="平时" style="width: 68px;"></el-input>
@@ -43,11 +55,11 @@
         <el-table-column property="dailyScroll" label="平时成绩" align="center" width="80px;"></el-table-column>
         <el-table-column property="examScroll" label="考试成绩" align="center" width="80px;"></el-table-column>
         <el-table-column property="resScroll" label="总分" align="center" width="80px;"></el-table-column>
-        <el-table-column property="result" label="考试结果" align="center" width="100px;"></el-table-column>
-        <el-table-column property="exam_category" label="考试类型" align="center" width="100px;"></el-table-column>
+        <el-table-column property="result_name" label="考试结果" align="center" width="100px;"></el-table-column>
+        <el-table-column property="exam_category_name" label="考试类型" align="center" width="100px;"></el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <el-button @click="delScroll(scope.row)" type="danger" size="medium">删除</el-button>
+            <el-button @click="delScore(scope.row)" type="danger" size="medium">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,9 +71,9 @@
 <script>
 export default {
   name: "manageScore",
-  props: ["chooseSid"],
   data() {
     return {
+      chooseSid: null,
       studentScoreManageModel: false,
       resultOpt: [
         {
@@ -71,6 +83,10 @@ export default {
         {
           label: "未通过",
           value: 2
+        },
+        {
+          label: "缺考",
+          value: 3
         }
       ],
       examOpt: [
@@ -85,84 +101,97 @@ export default {
         {
           label: "重修",
           value: 3
-        },
-        {
-          label: "缺考",
-          value: 4
         }
       ],
-      gridData: [
-        {
-          id: 1,
-          subject: "高等数学1",
-          dailyScroll: 60,
-          examScroll: 60,
-          resScroll: 60,
-          result: 1,
-          exam_category: "普通",
-          addBy: 1
-        },
-        {
-          id: 2,
-          subject: "高等数学3",
-          dailyScroll: 50,
-          examScroll: 30,
-          resScroll: 45,
-          result: 2,
-          exam_category: "普通",
-          addBy: 1
-        },
-        {
-          id: 3,
-          subject: "高等数学3",
-          dailyScroll: 70,
-          examScroll: 70,
-          resScroll: 70,
-          result: 1,
-          exam_category: "补考",
-          addBy: 1
-        },
-        {
-          id: 4,
-          subject: "大学英语2",
-          dailyScroll: 60,
-          examScroll: 60,
-          resScroll: 60,
-          result: 1,
-          exam_category: "普通",
-          addBy: 1
-        }
-      ],
+      gridData: [],
       addExamRes: {
-        id: null,
         subject: "",
         dailyScroll: null,
         examScroll: null,
         resScroll: null,
-        result: "",
-        exam_category: ""
-      }
+        result: null,
+        exam_category: null
+      },
+      subjectOpt: []
     };
   },
   methods: {
-    showScoreManageModel() {
+    showScoreManageModel(sid) {
+      this.chooseSid = sid;
       this.studentScoreManageModel = true;
-      this.gridData = []
+      this.gridData = [];
+      // 初始化学科列表
+      this.initSubjectList();
       // 初始化学生数据
-      this.initStudentScore()
+      this.initStudentScore();
     },
-    delScroll(scrollInfo) {
-      console.log("scrollInfo => ", scrollInfo);
+    async delScore(scoreInfo) {
+      try {
+        const deleteScoreRes = await this.$api.score.delScore(scoreInfo.id)
+        this.$message.success(deleteScoreRes.msg || '删除成功！')
+        this.initStudentScore();
+      } catch (error) {
+        this.$message.error(error.msg || '删除失败！')
+      }
     },
-    addExamResInfo() {},
+    async addExamResInfo() {
+      const vm = this;
+      const addInfoObj = {
+        student_ID: vm.chooseSid,
+        subject_ID: vm.addExamRes.subject,
+        dailyScroll: vm.addExamRes.dailyScroll,
+        examScroll: vm.addExamRes.examScroll,
+        resScroll: vm.addExamRes.resScroll,
+        result: vm.addExamRes.result,
+        exam_Category: vm.addExamRes.exam_category
+      };
+      try {
+        const addScoreRes = await this.$api.score.addScore(addInfoObj);
+        this.addExamRes = {
+          subject: "",
+          dailyScroll: null,
+          examScroll: null,
+          resScroll: null,
+          result: "",
+          exam_category: ""
+        };
+        this.initStudentScore();
+      } catch (error) {
+        this.$message.error(error.msg || "添加失败！");
+      }
+    },
     async initStudentScore() {
       try {
-        const getStudentScoreRes = await this.$api.score.getScoreInfo(this.chooseSid)
-        console.log(getStudentScoreRes)
+        const vm = this
+        const getStudentScoreRes = await this.$api.score.getScoreInfo(
+          this.chooseSid
+        );
+        this.gridData = getStudentScoreRes.getScoreInfo.map(item => {
+          return {
+            id: item._id,
+            subject: item.subjectName,
+            dailyScroll: item.dailyScroll,
+            examScroll: item.examScroll,
+            resScroll: item.resScroll,
+            result_name: vm.resultOpt.filter(ArrObjItem => {
+              return ArrObjItem.value == item.result
+            })[0].label,
+            exam_category_name: vm.examOpt.filter(ArrObjItem => {
+              return ArrObjItem.value == item.exam_Category
+            })[0].label,
+          };
+        });
       } catch (error) {
-        
+        this.$message.error("学生分数加载失败！");
       }
-      console.log('init')
+    },
+    async initSubjectList() {
+      try {
+        const getSubjectListRes = await this.$api.subject.getSubjectList();
+        this.subjectOpt = getSubjectListRes.subjectList;
+      } catch (error) {
+        this.$message.error("学科列表加载失败！");
+      }
     }
   }
 };
