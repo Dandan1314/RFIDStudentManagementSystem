@@ -35,6 +35,9 @@ export default {
         if(data['data']['role'] == 1) {
           auth = '管理员'
         }
+        if(!data['data']['role']) {
+          data['data']['role'] = 3
+        }
         localStorage.setItem('loginInfo', `{ "name": "${data.data.name}", "role": "${data.data.role}", "_id": "${data.data._id}" }`)
         vm.$message.success(`${data.msg}, 欢迎${data.data.name}登录系统，身份${auth} 。`)
         setTimeout(() => {

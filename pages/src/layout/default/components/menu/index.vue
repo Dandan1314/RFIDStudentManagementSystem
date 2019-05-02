@@ -88,6 +88,11 @@ export default {
           label: "学生管理",
           path: "/manageStudent",
           showMenu: [1, 2]
+        },
+        {
+          label: "我的成绩",
+          path: "/ShowStudentScore",
+          showMenu: [3]
         }
       ]
     };
