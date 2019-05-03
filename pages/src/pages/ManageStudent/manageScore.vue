@@ -50,7 +50,7 @@
           <el-button type="primary" icon="el-icon-plus" @click="addExamResInfo"></el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="gridData">
+      <el-table :data="renderData">
         <el-table-column property="subject" label="学科名" align="center" width="200px"></el-table-column>
         <el-table-column property="dailyScroll" label="平时成绩" align="center" width="80px;"></el-table-column>
         <el-table-column property="examScroll" label="考试成绩" align="center" width="80px;"></el-table-column>
@@ -63,7 +63,14 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination background layout="prev, pager, next" :total="1000" style="margin-top:20px;"></el-pagination>
+      <el-pagination
+        :page-size="pageSize"
+        background
+        layout="prev, pager, next"
+        :total="totalNum"
+        @current-change="pageChange"
+        style="margin-top:20px;"
+      ></el-pagination>
     </el-dialog>
   </div>
 </template>
@@ -73,7 +80,9 @@ export default {
   name: "manageScore",
   data() {
     return {
+      pageSize: 5,
       chooseSid: null,
+      totalNum: 0,
       studentScoreManageModel: false,
       resultOpt: [
         {
@@ -112,7 +121,8 @@ export default {
         result: null,
         exam_category: null
       },
-      subjectOpt: []
+      subjectOpt: [],
+      renderData: []
     };
   },
   methods: {
@@ -127,15 +137,29 @@ export default {
     },
     async delScore(scoreInfo) {
       try {
-        const deleteScoreRes = await this.$api.score.delScore(scoreInfo.id)
-        this.$message.success(deleteScoreRes.msg || '删除成功！')
+        const deleteScoreRes = await this.$api.score.delScore(scoreInfo.id);
+        this.$message.success(deleteScoreRes.msg || "删除成功！");
         this.initStudentScore();
       } catch (error) {
-        this.$message.error(error.msg || '删除失败！')
+        this.$message.error(error.msg || "删除失败！");
       }
     },
     async addExamResInfo() {
       const vm = this;
+      if (
+        !(
+          vm.chooseSid &&
+          vm.addExamRes.subject &&
+          vm.addExamRes.dailyScroll &&
+          vm.addExamRes.examScroll &&
+          vm.addExamRes.resScroll &&
+          vm.addExamRes.result &&
+          vm.addExamRes.exam_category
+        )
+      ) {
+        this.$message.error("信息填写不完整！");
+        return false;
+      }
       const addInfoObj = {
         student_ID: vm.chooseSid,
         subject_ID: vm.addExamRes.subject,
@@ -147,6 +171,7 @@ export default {
       };
       try {
         const addScoreRes = await this.$api.score.addScore(addInfoObj);
+        this.$message.success(addScoreRes.msg || "添加成功！");
         this.addExamRes = {
           subject: "",
           dailyScroll: null,
@@ -162,10 +187,11 @@ export default {
     },
     async initStudentScore() {
       try {
-        const vm = this
+        const vm = this;
         const getStudentScoreRes = await this.$api.score.getScoreInfo(
           this.chooseSid
         );
+        this.totalNum = getStudentScoreRes.getScoreInfo.length;
         this.gridData = getStudentScoreRes.getScoreInfo.map(item => {
           return {
             id: item._id,
@@ -174,14 +200,16 @@ export default {
             examScroll: item.examScroll,
             resScroll: item.resScroll,
             result_name: vm.resultOpt.filter(ArrObjItem => {
-              return ArrObjItem.value == item.result
+              return ArrObjItem.value == item.result;
             })[0].label,
             exam_category_name: vm.examOpt.filter(ArrObjItem => {
-              return ArrObjItem.value == item.exam_Category
-            })[0].label,
+              return ArrObjItem.value == item.exam_Category;
+            })[0].label
           };
         });
+        this.pageChange(1)
       } catch (error) {
+        console.log(error);
         this.$message.error("学生分数加载失败！");
       }
     },
@@ -192,6 +220,13 @@ export default {
       } catch (error) {
         this.$message.error("学科列表加载失败！");
       }
+    },
+    pageChange(curPage) {
+      const start = (curPage - 1) * this.pageSize;
+      const end = curPage * this.pageSize - 1;
+      this.renderData = this.gridData.filter((item, index) => {
+        return index >= start && index <= end
+      })
     }
   }
 };

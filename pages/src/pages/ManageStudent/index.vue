@@ -21,11 +21,10 @@
         placeholder="输入学生号搜索"
         style="width: 400px;margin-left: 10px;"
       />
-      <el-table
-        :data="tableData.filter(data => !search || data.num.includes(search.toLowerCase()))"
-        border
-        style="width: 100%;margin-top: 20px;"
-      >
+      <el-table :data="(search 
+                          ? tableData.filter(data => data.num.includes(search.toLowerCase()))
+                          : renderData)" 
+                          border style="width: 100%;margin-top: 20px;">
         <el-table-column prop="id" label="ID"></el-table-column>
         <el-table-column prop="num" label="学号"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
@@ -40,7 +39,9 @@
       <el-pagination
         background
         layout="prev, pager, next"
+        :page-size="pageSize"
         :total="itemTotal"
+        @current-change="pageChange"
         style="margin-top: 16px;"
         v-show="!search"
       ></el-pagination>
@@ -128,7 +129,8 @@ export default {
         StudentName: ""
       },
       search: null,
-      itemTotal: 100,
+      pageSize: 10,
+      itemTotal: 0,
       tableData: [],
       delStudentModel: false,
       delStudentInfo: {
@@ -144,7 +146,8 @@ export default {
       },
       cardControl: "",
       CMList: [],
-      CMListSelect: ["", ""]
+      CMListSelect: ["", ""],
+      renderData: []
     };
   },
   methods: {
@@ -255,9 +258,19 @@ export default {
           delete item.student_Num;
           return item;
         });
+        this.itemTotal = getStudentList.getStudentList.length;
+        this.search = null;
+        this.pageChange(1);
       } catch (error) {
         this.$message.error("学生列表获取失败");
       }
+    },
+    pageChange(curPage) {
+        const start = (curPage - 1) * this.pageSize;
+        const end = curPage * this.pageSize - 1;
+        this.renderData = this.tableData.filter((item, index) => {
+          return index >= start && index <= end;
+        });
     }
   },
   mounted() {

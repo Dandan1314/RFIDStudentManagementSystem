@@ -22,7 +22,9 @@
         style="width: 400px;margin-left: 10px;"
       />
       <el-table
-        :data="tableData.filter(data => !search || data.num.includes(search.toLowerCase()))"
+        :data="(search 
+                ? tableData.filter(data => data.num.includes(search.toLowerCase()))
+                : renderData)"
         border
         style="width: 100%;margin-top: 20px;"
       >
@@ -39,7 +41,9 @@
       <el-pagination
         background
         layout="prev, pager, next"
+        :page-size="pageSize"
         :total="itemTotal"
+        @current-change="pageChange"
         style="margin-top: 16px;"
         v-show="!search"
       ></el-pagination>
@@ -125,7 +129,8 @@ export default {
         TeacherName: ""
       },
       search: null,
-      itemTotal: 100,
+      pageSize: 10,
+      itemTotal: 0,
       tableData: [],
       delTeacherModel: false,
       delTeacherInfo: {
@@ -139,7 +144,8 @@ export default {
         name: "",
         num: null
       },
-      cardControl: ""
+      cardControl: "",
+      renderData: []
     };
   },
   methods: {
@@ -147,6 +153,9 @@ export default {
       try {
         const TeacherListRes = await this.$api.ManageTeacher.getTeacherList();
         this.tableData = TeacherListRes.TeacherList;
+        this.itemTotal = TeacherListRes.TeacherList.length;
+        this.search = null;
+        this.pageChange(1);
       } catch (error) {
         console.log(error);
       }
@@ -211,6 +220,13 @@ export default {
       } catch (error) {
         vm.$message.error("换卡失败！");
       }
+    },
+    pageChange(curPage) {
+      const start = (curPage - 1) * this.pageSize;
+      const end = curPage * this.pageSize - 1;
+      this.renderData = this.tableData.filter((item, index) => {
+        return index >= start && index <= end;
+      });
     }
   },
   mounted() {

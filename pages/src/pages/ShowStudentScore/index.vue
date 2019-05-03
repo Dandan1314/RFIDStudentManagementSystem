@@ -7,7 +7,7 @@
       </el-breadcrumb>
     </div>
     <div>
-      <el-table :data="scoreData" stripe :height="dataHeight">
+      <el-table :data="scoreData" stripe>
         <el-table-column prop="subject" label="学科"></el-table-column>
         <el-table-column prop="dailyScroll" label="平时成绩"></el-table-column>
         <el-table-column prop="examScroll" label="考试成绩"></el-table-column>
